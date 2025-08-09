@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=600, initial-scale=1.0">
+  <title>CCS Level Replacer</title>
+  <link rel="stylesheet" href="../node_modules/7.css/dist/7.css">
+  <link rel="stylesheet" href="style.css">
+  <style>body { background: transparent !important; user-select: none !important; margin: 0 !important; overflow: hidden !important;   display: flex; justify-content: center; align-items: center; }</style>
+</head>
+<body>
+  <div class="window active glass" style="width: 500px; height: 165px; margin: 10px; backdrop-filter: blur(4px);">
+    <div class="title-bar" style="-webkit-app-region:drag;">
+      <div class="title-bar-text">Level Replacer</div>
+      <div class="title-bar-controls" style="-webkit-app-region:none;">
+        <button aria-label="Minimize" onclick="window.electronAPI.minimizeWindow()"></button>
+        <button aria-label="Maximize" disabled></button>
+        <button aria-label="Close" onclick="window.close()"></button>
+      </div>
+    </div>
+    <div class="window-body" >
+      <form id="mainForm" style="margin: 1em;">
+        <div class="field-row-stacked">
+          <label for="fileInput">Choose file (.json, .txt):</label>
+          <button type="button" id="filePicker" class="button">Pick File</button>
+          <span id="fileName" style="margin-left: 1em; color: #444; font-size: 0.98em;">No file selected</span>
+        </div>
+        <div class="field-row-stacked">
+          <label for="levelDefinitionId_meta">Level ID:</label>
+          <input type="text" id="levelDefinitionId_meta" class="input" placeholder="Enter level ID">
+        </div>
+        <div class="field-row-stacked">
+          <label for="id_meta">Preferred level:</label>
+          <input type="text" id="id_meta" class="input" placeholder="Enter preferred level">
+        </div>
+        <div class="field-row" style="margin-top: 1.2em;">
+          <button type="button" id="processBtn" class="button primary">Process File</button>
+          <button type="button" id="aboutApp" class="button primary">About</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="renderer.js"></script>
+  <script>
+    // Handle window focus changes for .active class
+    window.electronAPI.onWindowFocusChange((event, isFocused) => {
+      const windowElement = document.querySelector('.window');
+      if (windowElement) {
+        if (isFocused) {
+          windowElement.classList.add('active');
+        } else {
+          windowElement.classList.remove('active');
+        }
+      }
+    });
+  </script>
+</body>
+</html> 

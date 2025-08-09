@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=400, initial-scale=1.0">
+  <title>Dialog</title>
+  <link rel="stylesheet" href="../node_modules/7.css/dist/7.css">
+  <style>
+    body { background: transparent !important; user-select: none !important; margin: 0 !important; overflow: hidden !important; display: flex; justify-content: center; align-items: center; }
+    .window { width: 400px; height: fit-content; margin: 0; backdrop-filter: blur(4px); }
+    .icon { width: 32px; height: 32px; image-rendering: pixelated; }
+    .icon.error { background: url(error.png); }
+    .icon.info { background: url(info.png); }
+    .icon.warning { background: url(warning.png); }
+    .icon.help { background: url(help.png); }
+    .icon.ccgapps { background: url(ccgapps.png); }
+    .dialog-link { color: #0066cc; text-decoration: underline; cursor: pointer; }
+    .dialog-link:hover { color: #0052a3; }
+  </style>
+</head>
+<body>
+  <div class="window active glass" style="width: 400px; height: fit-content; margin: 10px; backdrop-filter: blur(4px);">
+    <div class="title-bar" style="-webkit-app-region:drag;">
+      <div class="title-bar-text" id="dialogTitle">Level Replacer</div>
+      <div class="title-bar-controls" style="-webkit-app-region:none;">
+        <button aria-label="Close" onclick="window.close()"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="background-color: #ffffff; display: flex; padding: 10px; align-items: center; gap: 10px;">
+      <div class="icon" id="dialogIcon"></div>
+      <span class="instruction" id="dialogMessage"></span>
+    </div>
+    <footer style="justify-content: end; gap: 5px; display: flex;" id="dialogButtons">
+    </footer>
+  </div>
+  <script>
+    // Handle window focus changes for .active class
+    window.electronAPI.onWindowFocusChange((event, isFocused) => {
+      const windowElement = document.querySelector('.window');
+      if (windowElement) {
+        if (isFocused) {
+          windowElement.classList.add('active');
+        } else {
+          windowElement.classList.remove('active');
+        }
+      }
+    });
+    
+    // Listen for dialog data from main process
+    window.electronAPI.onDialogData((data) => {
+      const title = data.title || 'Dialog';
+      const message = data.message || 'No message provided.';
+      let buttons = data.buttons || ['OK'];
+      const icon = data.icon || 'info';
+      
+      document.getElementById('dialogTitle').textContent = title;
+      // Use innerHTML to support line breaks and links
+      let formattedMessage = message.replace(/\n/g, '<br>');
+      // Support markdown-style links [text](url)
+      formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="dialog-link">$1</a>');
+      document.getElementById('dialogMessage').innerHTML = formattedMessage;
+      
+      // Add click handlers for links
+      const links = document.querySelectorAll('#dialogMessage .dialog-link');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.electronAPI.openExternal(link.href);
+        });
+      });
+      
+      // Set icon
+      const iconElement = document.getElementById('dialogIcon');
+      iconElement.className = `icon ${icon}`;
+      
+      const btnRow = document.getElementById('dialogButtons');
+      
+      // Clear existing buttons
+      btnRow.innerHTML = '';
+      
+      if (!Array.isArray(buttons) || buttons.length === 0) buttons = ['OK'];
+      buttons.forEach((label, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'button primary';
+        btn.textContent = label;
+        btn.onclick = () => {
+          window.electronAPI.sendDialogResponse(idx);
+          window.close();
+        };
+        btnRow.appendChild(btn);
+      });
+      
+      // Auto-resize dialog window to fit content
+      setTimeout(() => {
+        const winBody = document.querySelector('.window-body');
+        if (winBody) {
+          const height = winBody.scrollHeight + 110;
+          window.electronAPI.sendDialogResize(height);
+        }
+      }, 50);
+    });
+  </script>
+</body>
+</html> 

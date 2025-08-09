@@ -1,0 +1,14 @@
+body {
+  background: transparent !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.window {
+  margin: 40px auto;
+  backdrop-filter: blur(4px);
+}
+#alertBox {
+  width: 100%;
+  text-align: center;
+} 

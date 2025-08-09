@@ -1,0 +1,45 @@
+<html>
+<head>
+<style>
+body {
+  background: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  perspective: 800px;
+}
+
+.sleepy-box {
+  width: 220px;
+  height: 120px;
+  background: #fce4ec;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  animation: wakeUp 0.3s linear forwards;
+  transform-style: preserve-3d;
+  transform-origin: top;
+}
+
+@keyframes wakeUp {
+  0% {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="sleepy-box">
+    <p>Ủa... sáng rồi hả?</p>
+  </div>
+</body>
+</html>
